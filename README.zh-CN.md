@@ -2,7 +2,7 @@
 
 [![Minecraft Cape Notifier](https://github.com/oddstab/mc-cape-notifier/actions/workflows/notify.yml/badge.svg)](https://github.com/oddstab/mc-cape-notifier/actions/workflows/notify.yml)
 
-[English](README.md) · [繁體中文](README.zh-TW.md) · **简体中文**
+[English](README.en.md) · [繁體中文](README.md) · **简体中文**
 
 Minecraft 出新披风（Cape）时，通过 Telegram Bot 通知你。由 GitHub Actions 定时执行，不需要自己的服务器。
 
