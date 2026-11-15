@@ -37,8 +37,13 @@ def tg_api(token: str, method: str, params: dict | None = None) -> dict:
     url = f"https://api.telegram.org/bot{token}/{method}"
     data = urllib.parse.urlencode(params).encode("utf-8") if params else None
     req = urllib.request.Request(url, data=data)
-    with urllib.request.urlopen(req, timeout=15) as resp:
-        return json.loads(resp.read().decode("utf-8"))
+    try:
+        with urllib.request.urlopen(req, timeout=20) as resp:
+            return json.loads(resp.read().decode("utf-8"))
+    except TimeoutError as exc:
+        raise RuntimeError(
+            "連線至 Telegram Bot API 逾時：請確認已先在 Telegram 對你的 Bot 按下 Start / 傳送任意訊息，且 Token 的 Bot ID 正確（未誤改數字）。"
+        ) from exc
 
 
 def resolve_chat_id(token: str, env_chat_id: str) -> str:
