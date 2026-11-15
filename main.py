@@ -65,9 +65,29 @@ def send_telegram(token: str, chat_id: str, text: str) -> None:
         raise RuntimeError(f"Telegram 發送失敗: {res}")
 
 
+def format_test_message(total: int) -> str:
+    return (
+        "✅ Cape notifier test succeeded / 披風通知測試成功\n"
+        f"Tracking {total} capes / 目前追蹤 {total} 款披風\n"
+        "https://minecraft.wiki/w/Cape"
+    )
+
+
+def format_change_message(added: list[str]) -> str:
+    lines = ["🚨 New Minecraft cape / Minecraft 新披風"]
+    lines.append(
+        f"Added / 新增：{', '.join(added)}" if added else "Cape list updated / 披風清單已更新"
+    )
+    lines.append("https://minecraft.wiki/w/Cape")
+    return "\n".join(lines)
+
+
 def self_check() -> None:
     sample = "* {{PersonaLink|Pan Cape|Pan}}\n* {{PersonaLink|Copper Cape|Copper}}"
     assert extract_capes(sample) == ["Copper Cape", "Pan Cape"]
+    msg = format_change_message(["Fox Cape"])
+    assert "Fox Cape" in msg and "Added" in msg and "新增" in msg
+    assert "Cape list updated" in format_change_message([])
     state = fetch_wiki_state()
     assert len(state["hash"]) == 64 and len(state["capes"]) >= 50
     print(f"Self-check OK: {len(state['capes'])} capes, hash={state['hash'][:12]}...")
@@ -88,22 +108,13 @@ def main() -> None:
 
     if force_test:
         chat_id = resolve_chat_id(token, os.getenv("TG_CHAT_ID", "").strip())
-        send_telegram(
-            token,
-            chat_id,
-            f"✅ Minecraft 披風通知測試成功！\n目前共追蹤 {len(cur['capes'])} 款披風。\nhttps://minecraft.wiki/w/Cape",
-        )
+        send_telegram(token, chat_id, format_test_message(len(cur["capes"])))
         print(f"已發送測試通知至 chat_id={chat_id}")
 
     if prev and prev.get("hash") != cur["hash"]:
         chat_id = resolve_chat_id(token, os.getenv("TG_CHAT_ID", "").strip())
         added = [c for c in cur["capes"] if c not in set(prev.get("capes", []))]
-        detail = f"新增披風：{', '.join(added)}\n" if added else "Wiki 披風導覽模板內容已變更。\n"
-        send_telegram(
-            token,
-            chat_id,
-            f"🚨 Minecraft 新披風通知！\n{detail}https://minecraft.wiki/w/Cape",
-        )
+        send_telegram(token, chat_id, format_change_message(added))
         print("偵測到變更，已發送 Telegram 通知。")
 
     if not prev or prev.get("hash") != cur["hash"]:
