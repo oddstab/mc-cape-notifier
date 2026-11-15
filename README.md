@@ -1,15 +1,45 @@
 # Minecraft Cape Notifier (Telegram)
 
-每 30 分鐘透過 GitHub Actions 檢查 Minecraft Wiki 披風導覽模板（`Template:Navbox_capes`），當有新披風加入或模板更新時，自動透過 Telegram Bot 發送通知。
+[![Minecraft Cape Notifier](https://github.com/oddstab/mc-cape-notifier/actions/workflows/notify.yml/badge.svg)](https://github.com/oddstab/mc-cape-notifier/actions/workflows/notify.yml)
 
-## GitHub Secrets 設定
+Minecraft 出新披風（Cape）時，透過 Telegram Bot 通知你。用 GitHub Actions 定時執行，不需要自己的伺服器。
+
+## 運作方式
+
+1. GitHub Actions 每 30 分鐘執行一次 `main.py`（排程以 UTC 計算，GitHub 常會延遲幾分鐘到十幾分鐘）。
+2. `main.py` 讀取 Minecraft Wiki 的披風導覽模板 [`Template:Navbox_capes`](https://minecraft.wiki/w/Template:Navbox_capes)，整理出披風清單。
+3. 和上次存在 `state.json` 的清單比對；有變動就發 Telegram 通知並列出新增的披風，再把新清單 commit 回儲存庫。沒變動就什麼都不做。
+
+只用 Python 標準庫，不需要安裝任何套件。
+
+## GitHub Secrets
+
+在 [Settings → Secrets and variables → Actions](https://github.com/oddstab/mc-cape-notifier/settings/secrets/actions) 設定。Secret 的值存進去後就看不到了，只能覆寫。
 
 | Secret 名稱 | 說明 |
 | :--- | :--- |
-| `TG_BOT_TOKEN` | Telegram BotFather 核發的 Bot Token（必填） |
-| `TG_CHAT_ID` | 接收通知的 Chat ID（選填；若未填寫，會自動從你傳給 Bot 的最新訊息取得） |
+| `TG_BOT_TOKEN` | `@BotFather` 核發的 Bot Token（必填） |
+| `TG_CHAT_ID` | 接收通知的 Chat ID（選填；未設定時會從 Bot 最近收到的訊息自動取得） |
 
-## 手動測試與本機檢查
+用 `gh` 更新：
 
-- 在 GitHub Actions 頁面點選 **Minecraft Cape Notifier** → **Run workflow**（`send_test` 選 `true`）即可立刻發送測試訊息。
-- 本機自我檢查：`python main.py --check`
+```bash
+gh secret set TG_BOT_TOKEN   # 互動輸入，值不會留在終端機紀錄
+gh secret set TG_CHAT_ID
+gh secret list               # 只列名稱與更新時間
+```
+
+## 手動測試
+
+- 網頁：[Actions](https://github.com/oddstab/mc-cape-notifier/actions/workflows/notify.yml) → **Run workflow**，`send_test` 選 `true`，會立刻發一則測試通知。
+- 指令：`gh workflow run notify.yml -f send_test=true`
+- 本機自我檢查（不發通知）：`python main.py --check`
+
+## 限制
+
+- 資料來源是社群維護的 Minecraft Wiki，通知時間取決於 Wiki 編輯者多快更新，可能比官方公告晚。
+- 公開儲存庫連續 60 天沒有 commit，GitHub 會自動停用排程，並寄信通知。到 Actions 頁面按 **Enable workflow** 即可恢復。
+
+## 授權
+
+[MIT](LICENSE)
