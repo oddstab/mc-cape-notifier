@@ -67,16 +67,18 @@ def send_telegram(token: str, chat_id: str, text: str) -> None:
 
 def format_test_message(total: int) -> str:
     return (
-        "✅ Cape notifier test succeeded / 披風通知測試成功\n"
-        f"Tracking {total} capes / 目前追蹤 {total} 款披風\n"
+        "✅ 披風通知測試成功 / Cape notifier test succeeded\n"
+        f"目前追蹤 {total} 款披風 / Tracking {total} capes\n"
         "https://minecraft.wiki/w/Cape"
     )
 
 
 def format_change_message(added: list[str]) -> str:
-    lines = ["🚨 New Minecraft cape / Minecraft 新披風"]
+    lines = ["🚨 Minecraft 新披風 / New Minecraft cape"]
     lines.append(
-        f"Added / 新增：{', '.join(added)}" if added else "Cape list updated / 披風清單已更新"
+        f"新增：{', '.join(added)} / Added: {', '.join(added)}"
+        if added
+        else "披風清單已更新 / Cape list updated"
     )
     lines.append("https://minecraft.wiki/w/Cape")
     return "\n".join(lines)
