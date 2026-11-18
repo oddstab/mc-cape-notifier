@@ -10,7 +10,7 @@ Minecraft 出新披风（Cape）时，通过 Telegram Bot 通知你。由 GitHub
 
 1. GitHub Actions 每 30 分钟执行一次 `main.py`（排程按 UTC 计算，GitHub 常会延迟几分钟到十几分钟）。
 2. `main.py` 读取 Minecraft Wiki 的披风导航模板 [`Template:Navbox_capes`](https://minecraft.wiki/w/Template:Navbox_capes)，整理出披风清单。
-3. 与上次保存在 `state.json` 的清单比对；有变动就发送双语 Telegram 通知并列出新增的披风，再把新清单 commit 回仓库。没有变动则不做任何事。
+3. 与上次保存在 `state.json` 的清单比对；有变动就发送 Telegram 通知，附上每款新披风的 Wiki 链接与获取方式，再把新清单 commit 回仓库。没有变动则不做任何事。
 
 只用 Python 标准库，无需安装任何依赖。
 

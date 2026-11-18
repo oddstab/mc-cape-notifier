@@ -10,7 +10,7 @@ Get a Telegram message when Minecraft releases a new cape. Runs on GitHub Action
 
 1. GitHub Actions runs `main.py` every 30 minutes (the schedule is UTC; GitHub often delays runs by several minutes).
 2. `main.py` reads the cape navigation template [`Template:Navbox_capes`](https://minecraft.wiki/w/Template:Navbox_capes) from the Minecraft Wiki and builds the current cape list.
-3. It compares that list with the one saved in `state.json`. If something changed, it sends a bilingual Telegram message listing the newly added capes and commits the new list back to the repository. If nothing changed, it does nothing.
+3. It compares that list with the one saved in `state.json`. If something changed, it sends a Telegram message with each new cape's wiki link and how to obtain it, then commits the new list back to the repository. If nothing changed, it does nothing.
 
 Standard library only — no dependencies to install.
 
